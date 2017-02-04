@@ -6,5 +6,114 @@
         <h1>OWLFile {{file}}</h1>
 
         <p>Ontology {{ontology}}.</p>
+
+        <p>Reasoner {{reasoner}}.</p>
+
+        <h3>Tree</h3>
+        
+        <ul>
+            {{#each rootNodes}}
+            <li>{{this}}</li>
+            <ul>
+                {{#each children}}
+                <li>{{this}}</li><ul>
+                    {{#each children}}
+                    <li>{{this}}</li><ul>
+                        {{#each children}}
+                        <li>{{this}}</li><ul>
+                            {{#each children}}
+                            <li>{{this}}</li><ul>
+                                {{#each children}}
+                                <li>{{this}}</li><ul>
+                                    {{#each children}}
+                                    <li>{{this}}</li><ul>
+                                        {{#each children}}
+                                        <li>{{this}}</li><ul>
+                                            {{#each children}}
+                                            <li>{{this}}</li><ul>
+                                                {{#each children}}
+                                                <li>{{this}}</li><ul>
+                                                    {{#each children}}
+                                                    <li>{{this}}</li><ul>
+                                                        {{#each children}}
+                                                        <li>{{this}}</li><ul>
+                                                            {{#each children}}
+                                                            <li>{{this}}</li><ul>
+                                                                {{#each children}}
+                                                                <li>{{this}}</li><ul>
+                                                                    {{#each children}}
+                                                                    <li>{{this}}</li><ul>
+                                                                        {{#each children}}
+                                                                        <li>{{this}}</li><ul>
+                                                                            {{#each children}}
+                                                                            <li>{{this}}</li><ul>
+                                                                            {{#each children}}
+                                                                            <li>{{this}}</li><ul>
+                                                                            {{#each children}}
+                                                                            <li>{{this}}</li><ul>
+                                                                            {{#each children}}
+                                                                            <li>{{this}}</li><ul>
+                                                                            {{#each children}}
+                                                                            <li>{{this}}</li><ul>
+                                                                            {{#each children}}
+                                                                            <li>{{this}}</li><ul>
+                                                                            {{#each children}}
+                                                                            <li>{{this}}</li><ul>
+                                                                            {{#each children}}
+                                                                            <li>{{this}}</li><ul>
+                                                                            {{#each children}}
+                                                                            <li>{{this}}</li><ul>
+                                                                            {{#each children}}
+                                                                            <li>{{this}}</li>
+
+                                                                            </ul>{{/each}}
+
+                                                                            </ul>{{/each}}
+
+                                                                            </ul>{{/each}}
+
+                                                                            </ul>{{/each}}
+
+                                                                            </ul>{{/each}}
+
+                                                                            </ul>{{/each}}
+
+                                                                            </ul>{{/each}}
+
+                                                                            </ul>{{/each}}
+
+                                                                            </ul>{{/each}}
+
+                                                                            </ul>{{/each}}
+                                                                        </ul>{{/each}}
+                                                                    </ul>{{/each}}
+                                                                </ul>{{/each}}
+                                                            </ul>{{/each}}
+                                                        </ul>{{/each}}
+                                                    </ul>{{/each}}
+                                                </ul>{{/each}}
+                                            </ul>{{/each}}
+                                        </ul>{{/each}}
+                                    </ul>{{/each}}
+                                </ul>{{/each}}
+                            </ul>{{/each}}
+                        </ul>{{/each}}
+                    </ul>{{/each}}
+                </ul>{{/each}}
+            </ul>{{/each}}
+        </ul>
+
+        <h3>Individuals by class</h3>
+
+        <ul>
+            {{#each individualsByClass}}
+            <li>{{@key}}</li>
+            <ul>
+                {{#each this}}
+                <li>{{this}}</li>      
+                {{/each}}
+            </ul>
+            {{/each}}
+        </ul>
     </body>
 </html>
