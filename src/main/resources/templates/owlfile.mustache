@@ -17,7 +17,7 @@
     <body>
         <h1>PhyloDeRef</h1>
 
-        <p>Jump to: <a href="#class_membership">class membership</a>, <a href="#properties">properties</a>.</p>
+        <p>Jump to: <a href="#tree">tree</a>, <a href="#class_membership">class membership</a>, <a href="#properties">properties</a>.</p>
 
         <h2>Query phyloreference</h2>
 
@@ -32,9 +32,113 @@
         </p>
         {{/if}}
 
+        <h2>Phyloreferences</h2>
+
+        <p>Jump to: {{#each phylorefs}}<a href="#phyloref_{{@key.IRI.Fragment}}">{{@key.IRI.Fragment}}</a> {{/each}}.</p>
+
+        <div class="tree">
+        <ol>
+            {{#each phylorefs}}
+            <li id="phyloref_{{@key.IRI.Fragment}}">{{@key.IRI}}</li>
+
+            <ol>
+                {{#each this}}
+                <li>{{this}}</li>
+
+                <ul>
+                    {{#each children}}
+                    <li>{{this}}</li><ul>
+                        {{#each children}}
+                        <li>{{this}}</li><ul>
+                            {{#each children}}
+                            <li>{{this}}</li><ul>
+                                {{#each children}}
+                                <li>{{this}}</li><ul>
+                                    {{#each children}}
+                                    <li>{{this}}</li><ul>
+                                        {{#each children}}
+                                        <li>{{this}}</li><ul>
+                                            {{#each children}}
+                                            <li>{{this}}</li><ul>
+                                                {{#each children}}
+                                                <li>{{this}}</li><ul>
+                                                    {{#each children}}
+                                                    <li>{{this}}</li><ul>
+                                                        {{#each children}}
+                                                        <li>{{this}}</li><ul>
+                                                            {{#each children}}
+                                                            <li>{{this}}</li><ul>
+                                                                {{#each children}}
+                                                                <li>{{this}}</li><ul>
+                                                                    {{#each children}}
+                                                                    <li>{{this}}</li><ul>
+                                                                        {{#each children}}
+                                                                        <li>{{this}}</li><ul>
+                                                                            {{#each children}}
+                                                                            <li>{{this}}</li><ul>
+                                                                                {{#each children}}
+                                                                                <li>{{this}}</li><ul>
+                                                                                {{#each children}}
+                                                                                <li>{{this}}</li><ul>
+                                                                                {{#each children}}
+                                                                                <li>{{this}}</li><ul>
+                                                                                {{#each children}}
+                                                                                <li>{{this}}</li><ul>
+                                                                                {{#each children}}
+                                                                                <li>{{this}}</li><ul>
+                                                                                {{#each children}}
+                                                                                <li>{{this}}</li><ul>
+                                                                                {{#each children}}
+                                                                                <li>{{this}}</li><ul>
+                                                                                {{#each children}}
+                                                                                <li>{{this}}</li><ul>
+                                                                                {{#each children}}
+                                                                                <li>{{this}}</li><ul>
+                                                                                {{#each children}}
+                                                                                <li>{{this}}</li>
+
+                                                                                {{/each}}
+
+                                                                                </ul>{{/each}}
+
+                                                                                </ul>{{/each}}
+
+                                                                                </ul>{{/each}}
+
+                                                                                </ul>{{/each}}
+
+                                                                                </ul>{{/each}}
+
+                                                                                </ul>{{/each}}
+
+                                                                                </ul>{{/each}}
+
+                                                                                </ul>{{/each}}
+
+                                                                                </ul>{{/each}}
+                                                                            </ul>{{/each}}
+                                                                        </ul>{{/each}}
+                                                                    </ul>{{/each}}
+                                                                </ul>{{/each}}
+                                                            </ul>{{/each}}
+                                                        </ul>{{/each}}
+                                                    </ul>{{/each}}
+                                                </ul>{{/each}}
+                                            </ul>{{/each}}
+                                        </ul>{{/each}}
+                                    </ul>{{/each}}
+                                </ul>{{/each}}
+                            </ul>{{/each}}
+                        </ul>{{/each}}
+                    </ul>{{/each}}
+                </ul>{{/each}}
+            </ol>{{/each}}
+        </ol>
+        </div>
+
         <h2>Other visualizations</h2>
 
-        <h3>Tree</h3>
+        <h3 id="tree">Tree</h3>
         
         <p>Jump to: {{#each rootNodes}}<a href="#tree_root_{{@index}}">{{this}}</a> {{/each}}.</p>
 

@@ -6,13 +6,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 import org.coode.owlapi.manchesterowlsyntax.ManchesterOWLSyntaxParserFactory;
 import org.semanticweb.HermiT.Reasoner;
-import org.semanticweb.owlapi.*;
 import org.semanticweb.owlapi.apibinding.*;
-import org.semanticweb.owlapi.io.FileDocumentSource;
 import org.semanticweb.owlapi.io.OWLParser;
-import org.semanticweb.owlapi.io.OWLParserException;
 import org.semanticweb.owlapi.io.StringDocumentSource;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.NodeSet;
 
 import spark.ModelAndView;
 import spark.template.handlebars.HandlebarsTemplateEngine;
@@ -57,6 +55,7 @@ class OWLFile {
 	private Reasoner reasoner;
 	private Set<NodeWrapper> rootNodes;
 	private Map<OWLClass, Set<NodeWrapper>> individualsByClass;
+	private Map<OWLClass, Set<OWLNamedIndividual>> phylorefs = new HashMap<>();
 
     public OWLFile(File fOnt, File fPhyloreference) throws OWLException, IOException { 
         fileOntology = fOnt;
@@ -112,6 +111,24 @@ class OWLFile {
 				.stream().map(e -> new NodeWrapper(ontology, reasoner, e.asOWLNamedIndividual()))
 				.collect(Collectors.toSet())
 		);
+		
+		// Phyloreferences are classes that are subclasses of phyloref:Phyloreferences.
+		IRI iri_phyloreferences = IRI.create("http://phyloinformatics.net/phyloref.owl#Phyloreference");
+		Set<OWLEntity> classes_phyloreferences = ontology.getEntitiesInSignature(iri_phyloreferences);
+		
+		phylorefs = new HashMap<>();
+		
+		System.err.println("classes_phyloreferences: " + classes_phyloreferences + ".");
+		for(OWLEntity class_phyloreferences: classes_phyloreferences) {
+			Set<OWLClass> subClasses = reasoner.getSubClasses(class_phyloreferences.asOWLClass(), false).getFlattened();
+			System.err.println("subClasses: " + subClasses + ".");
+			for(OWLClass c: subClasses) {
+				Set<OWLNamedIndividual> individuals = reasoner.getInstances(c, false).getFlattened();
+				System.err.println("individuals: " + individuals + ".");
+				
+				phylorefs.put(c, individuals);
+			}
+		}
 	}
 
     public OWLOntology getOntology() { return ontology; }
@@ -130,31 +147,36 @@ class OWLFile {
 		phyloreference = p;
 		
 		try {
-			System.err.println("about to recalculate");
-			recalculate();
-			System.err.println("recalculate successful");	
-		} catch(OWLException e) {
-			System.err.println("OWLException: " + e);		
+			recalculate();	
+		} catch(OWLException e) {		
 			addError("Could not parse phyloreference: " + e);
 			phyloreference = oldPhyloreference;
 		} catch(IOException e) {
-			System.err.println("IOException: " + e);
 			addError("Could not read phyloreference: " + e);
 			phyloreference = oldPhyloreference;
-		} catch(Exception e) {
-			System.err.println("Exception: " + e);
+		} catch(Exception e) { // Why isn't this being caught as an OWLException?
 			addError("Unknown exception: " + e);
-			phyloreference = oldPhyloreference;			
-		} finally {
-			System.err.println("recalculate finally");
+			phyloreference = oldPhyloreference;
 		}
+	}
+	
+	public Map<OWLClass, Set<NodeWrapper>> getPhylorefs() {
+		Map<OWLClass, Set<NodeWrapper>> results = new HashMap<>();
+		for(OWLClass c: phylorefs.keySet()) {
+			results.put(c, phylorefs.get(c).stream().map(i -> new NodeWrapper(ontology, reasoner, i)).collect(Collectors.toSet()));
+		}
+		return results;
 	}
 	
 	StringBuilder errors = new StringBuilder();
 	public void addError(String err) {
 		errors.append("\n").append(Instant.now()).append(": ").append(err);
 	}
-	public String getErrors() { return errors.toString(); }	
+	public String getErrors() { 
+		String errString = errors.toString(); 
+		errors = new StringBuilder();
+		return errString;
+	}
 }
 
 public class PhyloDeRef {
