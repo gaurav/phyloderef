@@ -171,7 +171,11 @@ class OWLFile {
 		reasoner = new Reasoner(ontology);
 	
 		individualsByClass = new HashMap<>();
-		for(OWLClass c: ontology.getClassesInSignature()) {		
+		for(OWLClass c: ontology.getClassesInSignature()) {
+			// Ignore owl:Thing
+			if(c.isTopEntity())
+				continue;
+			
             individualsByClass.put(c, reasoner.getInstances(c, false).getFlattened().stream().map(indiv -> new NodeWrapper(ontology, reasoner, indiv)).collect(Collectors.toSet()));
         }
 		
