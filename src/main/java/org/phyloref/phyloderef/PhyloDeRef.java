@@ -123,6 +123,9 @@ class OWLFile {
 			Set<OWLClass> subClasses = reasoner.getSubClasses(class_phyloreferences.asOWLClass(), false).getFlattened();
 			System.err.println("subClasses: " + subClasses + ".");
 			for(OWLClass c: subClasses) {
+				if(c.isBottomEntity())
+					continue;
+				
 				Set<OWLNamedIndividual> individuals = reasoner.getInstances(c, false).getFlattened();
 				System.err.println("individuals: " + individuals + ".");
 				
