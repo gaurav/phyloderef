@@ -10,21 +10,37 @@
 
             ul.hide { display: none; }
             ul.show { display: block; }
+
+            p.errors { color: red; margin-left: 2em; }
         </style>
     </head>
     <body>
-        <h1>OWLFile {{file}}</h1>
+        <h1>PhyloDeRef</h1>
 
-        <p>Ontology {{ontology}}.</p>
+        <p>Jump to: <a href="#class_membership">class membership</a>, <a href="#properties">properties</a>.</p>
 
-        <p>Reasoner {{reasoner}}.</p>
+        <h2>Query phyloreference</h2>
+
+        <form method="POST" action="./post">
+            <textarea name="phyloreferences" rows="40" cols="160">{{phyloreferences}}</textarea>
+            <button type="submit">Update</button>
+        </form>
+
+        {{#if errors}}
+        <p class="errors">
+            {{errors}}
+        </p>
+        {{/if}}
+
+        <h2>Other visualizations</h2>
 
         <h3>Tree</h3>
         
-        <div class="tree">
-        <ul>
+        <p>Jump to: {{#each rootNodes}}<a href="#tree_root_{{@index}}">{{this}}</a> {{/each}}.</p>
+
+        <div class="tree"><ol>
             {{#each rootNodes}}
-            <li>{{this}}</li>
+            <li id="tree_root_{{@index}}">{{this}}</li>
             <ul>
                 {{#each children}}
                 <li>{{this}}</li><ul>
@@ -77,7 +93,7 @@
                                                                             {{#each children}}
                                                                             <li>{{this}}</li>
 
-                                                                            </ul>{{/each}}
+                                                                            {{/each}}
 
                                                                             </ul>{{/each}}
 
@@ -112,20 +128,30 @@
                     </ul>{{/each}}
                 </ul>{{/each}}
             </ul>{{/each}}
-        </ul>
+        </ol>
         </div>
 
-        <h3>Individuals by class</h3>
+        <h3 id="class_membership">Class membership</h3>
+
+        <p>Jump to class: {{#each individualsByClass}}<a href="#membership_of_class_{{@key.IRI.Fragment}}">{{@key.IRI.Fragment}}</a> {{/each}}.</p>
 
         <ul>
             {{#each individualsByClass}}
-            <li>{{@key}}</li>
+            <li id="membership_of_class_{{@key.IRI.Fragment}}">{{@key}}</li>
             <ul>
                 {{#each this}}
                 <li>{{this}}</li>      
                 {{/each}}
             </ul>
             {{/each}}
+        </ul>
+
+        <h3 id="properties">Properties</h3>
+
+        <ul>
+            <li>OWLFile: {{file}}.</li>
+            <li>Ontology: {{ontology}}.</li>
+            <li>Reasoner: {{reasoner}}.</li>
         </ul>
     </body>
 </html>
