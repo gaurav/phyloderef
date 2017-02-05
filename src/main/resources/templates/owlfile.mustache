@@ -38,8 +38,13 @@
 
         <div class="tree">
         <ol>
+
             {{#each phylorefs}}
             <li id="phyloref_{{@key.IRI.Fragment}}">{{@key.IRI}}</li>
+
+            {{#each @key.equivalentClassesAsManchester}}
+            <p><strong>Equivalent to:</strong> {{this}}</p>
+            {{/each}}
 
             <ol>
                 {{#each this}}
@@ -131,7 +136,8 @@
                             </ul>{{/each}}
                         </ul>{{/each}}
                     </ul>{{/each}}
-                </ul>{{/each}}
+                </ul>{{/each}} 
+            <p></p>
             </ol>{{/each}}
         </ol>
         </div>

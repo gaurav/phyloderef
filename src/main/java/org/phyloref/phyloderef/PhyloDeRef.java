@@ -10,12 +10,82 @@ import org.semanticweb.owlapi.apibinding.*;
 import org.semanticweb.owlapi.io.OWLParser;
 import org.semanticweb.owlapi.io.StringDocumentSource;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.NodeSet;
+import org.semanticweb.owlapi.util.ShortFormProvider;
 
 import spark.ModelAndView;
 import spark.template.handlebars.HandlebarsTemplateEngine;
 
 import static spark.Spark.*;
+import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxObjectRenderer;
+
+class ClassWrapper {
+	private OWLOntology ontology;
+	private Reasoner reasoner;
+	private OWLClass clazz;
+	
+	public ClassWrapper(OWLOntology ont, Reasoner r, OWLClass c) {
+		ontology = ont;
+		reasoner = r;
+		clazz = c;
+	}
+	
+	public Set<OWLClassExpression> getEquivalentClasses() {
+		return clazz.getEquivalentClasses(ontology);
+	}
+	
+	public Set<String> getEquivalentClassesAsManchester() {
+		ShortFormProvider entityShortFormProvider = new ShortFormProvider() {
+			@Override
+			public String getShortForm(OWLEntity entity) {
+				// Since we can't get to the annotations in CDAO yet,
+				// we'll hard-code some of them here.
+				Map<IRI, String> shortForms = new HashMap<>();
+				shortForms.put(IRI.create("http://purl.obolibrary.org/obo/CDAO_0000140"), "Node");
+				shortForms.put(IRI.create("http://purl.obolibrary.org/obo/CDAO_0000149"), "has_Child");
+				shortForms.put(IRI.create("http://purl.obolibrary.org/obo/CDAO_0000174"), "has_Descendant");
+				
+				String name = null;
+				
+				// System.err.println("Trying to find a short form for " + entity.toString());
+				
+				// Try to find an rdfs:label for this entity.
+				OWLOntology ontology_containing_entity = ontology.getOWLOntologyManager().getOntology(entity.getIRI());
+				if(ontology_containing_entity != null)
+					for(OWLAnnotation annot: entity.getAnnotations(ontology_containing_entity)) {
+						// System.err.println(" - Annotation: " + annot.toString());
+						if(annot.getProperty().getIRI().equals(IRI.create("http://www.w3.org/2000/01/rdf-schema#label"))) {
+							name = annot.getValue().toString();
+						}
+					}
+				
+				if(name == null && shortForms.containsKey(entity.getIRI()))
+					name = shortForms.get(entity.getIRI());
+				
+				if(name == null)
+					name = entity.getIRI().getFragment();
+				
+				return name;
+			}
+
+			@Override
+			public void dispose() {
+				
+			}		
+		};
+		
+		return getEquivalentClasses().stream().map(ce -> {
+			StringWriter writer = new StringWriter();
+			ManchesterOWLSyntaxObjectRenderer renderer = new ManchesterOWLSyntaxObjectRenderer(writer, entityShortFormProvider);
+		
+			ce.accept(renderer);
+			
+			return writer.toString();
+		}).collect(Collectors.toSet());
+	}
+	
+	public OWLClass getOWLClass() { return clazz; }
+	public IRI getIRI() { return clazz.getIRI(); }
+}
 
 class NodeWrapper {
 	private OWLOntology ontology;
@@ -55,7 +125,7 @@ class OWLFile {
 	private Reasoner reasoner;
 	private Set<NodeWrapper> rootNodes;
 	private Map<OWLClass, Set<NodeWrapper>> individualsByClass;
-	private Map<OWLClass, Set<OWLNamedIndividual>> phylorefs = new HashMap<>();
+	private Map<ClassWrapper, Set<OWLNamedIndividual>> phylorefs = new HashMap<>();
 
     public OWLFile(File fOnt, File fPhyloreference) throws OWLException, IOException { 
         fileOntology = fOnt;
@@ -118,18 +188,18 @@ class OWLFile {
 		
 		phylorefs = new HashMap<>();
 		
-		System.err.println("classes_phyloreferences: " + classes_phyloreferences + ".");
+		//System.err.println("classes_phyloreferences: " + classes_phyloreferences + ".");
 		for(OWLEntity class_phyloreferences: classes_phyloreferences) {
 			Set<OWLClass> subClasses = reasoner.getSubClasses(class_phyloreferences.asOWLClass(), false).getFlattened();
-			System.err.println("subClasses: " + subClasses + ".");
+			//System.err.println("subClasses: " + subClasses + ".");
 			for(OWLClass c: subClasses) {
 				if(c.isBottomEntity())
 					continue;
 				
 				Set<OWLNamedIndividual> individuals = reasoner.getInstances(c, false).getFlattened();
-				System.err.println("individuals: " + individuals + ".");
+				//System.err.println("individuals: " + individuals + ".");
 				
-				phylorefs.put(c, individuals);
+				phylorefs.put(new ClassWrapper(ontology, reasoner, c), individuals);
 			}
 		}
 	}
@@ -163,9 +233,9 @@ class OWLFile {
 		}
 	}
 	
-	public Map<OWLClass, Set<NodeWrapper>> getPhylorefs() {
-		Map<OWLClass, Set<NodeWrapper>> results = new HashMap<>();
-		for(OWLClass c: phylorefs.keySet()) {
+	public Map<ClassWrapper, Set<NodeWrapper>> getPhylorefs() {
+		Map<ClassWrapper, Set<NodeWrapper>> results = new HashMap<>();
+		for(ClassWrapper c: phylorefs.keySet()) {
 			results.put(c, phylorefs.get(c).stream().map(i -> new NodeWrapper(ontology, reasoner, i)).collect(Collectors.toSet()));
 		}
 		return results;
