@@ -10,21 +10,21 @@ import spark.template.freemarker.FreeMarkerEngine;
 import static spark.Spark.*;
 
 public class PhyloDeRef {
-	private List<OWLFile> phylogenies;
+	private final List<Phylogeny> phylogenies;
 
-	public String getTitle() { return "PhyloDeRef/" + VERSION; }	
+	public String getName() { return "PhyloDeRef/" + VERSION; }	
 	public static final String VERSION = "0.1";
 
 	public PhyloDeRef() throws OWLException, IOException {
 		phylogenies = Arrays.asList(
-			new OWLFile(
+			new Phylogeny(
 				"Crowl et al., 2014: Plasmid + PPR tree",
 				new File("examples/journal.pone.0094199.s022.owl"),
 				new File("examples/journal.pone.0094199.s022.phylorefs.omn")
 			)
 		);
 	}
-	public List<OWLFile> getPhylogenies() { return phylogenies; }
+	public List<Phylogeny> getPhylogenies() { return phylogenies; }
 	
 	private static int getHerokuAssignedPort() {
         ProcessBuilder processBuilder = new ProcessBuilder();
@@ -52,7 +52,7 @@ public class PhyloDeRef {
 		get("/", (req, res) -> new ModelAndView(pr, "index.ftl"), new FreeMarkerEngine());
 		
 		pr.getPhylogenies().forEach((owlFile) -> {
-			get("/file/" + owlFile.getShortName(), (req, res) -> new ModelAndView(owlFile, "OWLFile.ftl"), new FreeMarkerEngine());
+			get("/file/" + owlFile.getShortName(), (req, res) -> new ModelAndView(owlFile, "phylogeny.ftl"), new FreeMarkerEngine());
 		});
 	}
 }

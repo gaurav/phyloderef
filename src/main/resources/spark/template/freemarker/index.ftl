@@ -2,8 +2,8 @@
 
 <#import "layout.ftl" as layout>
 
-<@layout.page>
-<h1>${title}</h1>
+<@layout.page title=name>
+<h1>${name}</h1>
 
 <p>Here are a list of currently loaded trees:</p>
 
@@ -20,4 +20,3 @@ or <a href="http://www.phyloref.org/">Phyloreferencing Project</a>.
 </p>
 
 </@layout.page>
-

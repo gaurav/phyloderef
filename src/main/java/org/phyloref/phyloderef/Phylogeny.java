@@ -24,12 +24,12 @@ import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 /**
- * An OWLFile wraps a single ontology (in an OWL file) and the pre-built
- * phyloreferences that go with it.
+ * A Phylogeny wraps a single ontology (in an OWL file) and the pre-built
+ phyloreferences that go with it.
  * 
  * @author Gaurav Vaidya <gaurav@ggvaidya.com>
  */
-public class OWLFile {
+public class Phylogeny {
 	
 	private File fileOntology;
 	private String phyloreference = "";
@@ -50,7 +50,7 @@ public class OWLFile {
 		return name;
 	}
 
-	public OWLFile(String name, File fOnt, File fPhyloreference) throws OWLException, IOException {
+	public Phylogeny(String name, File fOnt, File fPhyloreference) throws OWLException, IOException {
 		this.name = name;
 		this.shortName = fOnt.getName();
 		fileOntology = fOnt;

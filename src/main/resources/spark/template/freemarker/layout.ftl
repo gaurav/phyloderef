@@ -1,6 +1,6 @@
 <#ftl strip_whitespace = true>
 
-<#macro page>
+<#macro page title="PhyloDeRef">
 <!DOCTYPE html>
 <html>
     <head>
