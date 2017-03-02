@@ -22,6 +22,6 @@ Ontology: <http://phyloinformatics.net/phylo/pg_2357>
 
     Class: pg_2357:Evaniscus_marginatus_ex_tibialis_clade_expected
         EquivalentTo: {
-            pg_2357:Node_5
+            pg_2357:Node_4
         }
 
