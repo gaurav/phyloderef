@@ -20,9 +20,24 @@ public class PhyloDeRef {
 	public PhyloDeRef() throws OWLException, IOException {
 		phylogenies = Arrays.asList(
 			new Phylogeny(
-				"Crowl et al., 2014: Plasmid + PPR tree",
+				"Crowl et al., 2014: Plasmid ML tree",
+				new File("examples/journal.pone.0094199.s020.owl"),
+				new File("examples/journal.pone.0094199.s020.phylorefs.omn")
+			),
+			new Phylogeny(
+				"Crowl et al., 2014: PPR ML tree",
+				new File("examples/journal.pone.0094199.s021.owl"),
+				new File("examples/journal.pone.0094199.s021.phylorefs.omn")
+			),
+			new Phylogeny(
+				"Crowl et al., 2014: Plasmid + PPR ML tree",
 				new File("examples/journal.pone.0094199.s022.owl"),
 				new File("examples/journal.pone.0094199.s022.phylorefs.omn")
+			),
+			new Phylogeny(
+				"Mullins et al., 2012: most parsimonious tree",
+				new File("examples/pg_2357.owl"),
+				new File("examples/pg_2357.phylorefs.omn")
 			)
 		);
 	}
@@ -66,7 +81,12 @@ public class PhyloDeRef {
 		get("/", (req, res) -> new ModelAndView(pr, "index.ftl"), new FreeMarkerEngine(config));
 		
 		pr.getPhylogenies().forEach((owlFile) -> {
-			get("/file/" + owlFile.getShortName(), (req, res) -> new ModelAndView(owlFile, "phylogeny.ftl"), new FreeMarkerEngine(config));
+			get("/file/" + owlFile.getShortName() + "/", (req, res) -> new ModelAndView(owlFile, "phylogeny.ftl"), new FreeMarkerEngine(config));
+			post("/file/" + owlFile.getShortName() + "/post", (req, res) -> {
+				owlFile.setPhyloreferences(req.queryParams("phyloreferences"));
+				res.redirect("/file/" + owlFile.getShortName() + "/");
+				return res;
+			});
 		});
 	}
 }

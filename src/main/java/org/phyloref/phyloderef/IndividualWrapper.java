@@ -5,7 +5,6 @@
  */
 package org.phyloref.phyloderef;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -19,24 +18,24 @@ import org.semanticweb.owlapi.model.OWLOntology;
  *
  * @author Gaurav Vaidya <gaurav@ggvaidya.com>
  */
-public class NodeWrapper {
+public class IndividualWrapper implements Comparable {
 	private OWLOntology ontology;
 	private Reasoner reasoner;
 	private OWLIndividual node;
 	public IRI iri_CDAO_has_Child = IRI.create("http://purl.obolibrary.org/obo/CDAO_0000149");
 
-	public NodeWrapper(OWLOntology ont, Reasoner r, OWLIndividual n) {
+	public IndividualWrapper(OWLOntology ont, Reasoner r, OWLIndividual n) {
 		ontology = ont;
 		reasoner = r;
 		node = n;
 	}
 
-	public List<NodeWrapper> getChildren() {
-		List<NodeWrapper> children = new LinkedList<>();
+	public List<IndividualWrapper> getChildren() {
+		List<IndividualWrapper> children = new LinkedList<>();
 		Set<OWLObjectPropertyAssertionAxiom> objectPropertyAssertionAxioms = ontology.getObjectPropertyAssertionAxioms(node);
 		for (OWLObjectPropertyAssertionAxiom axiom : objectPropertyAssertionAxioms) {
 			if (axiom.getProperty().asOWLObjectProperty().getIRI().equals(iri_CDAO_has_Child)) {
-				children.add(new NodeWrapper(ontology, reasoner, axiom.getObject()));
+				children.add(new IndividualWrapper(ontology, reasoner, axiom.getObject()));
 			}
 		}
 		return children;
@@ -49,6 +48,15 @@ public class NodeWrapper {
 	@Override
 	public String toString() {
 		return node.asOWLNamedIndividual().getIRI().getFragment();
+	}
+	
+	public OWLIndividual getOWLIndividual() {
+		return node;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		return node.compareTo(((IndividualWrapper)o).getOWLIndividual());
 	}
 	
 }

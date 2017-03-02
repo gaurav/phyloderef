@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -36,8 +38,8 @@ public class Phylogeny {
 	private OWLOntologyManager manager;
 	private OWLOntology ontology;
 	private Reasoner reasoner;
-	private Set<NodeWrapper> rootNodes;
-	private Map<ClassWrapper, Set<NodeWrapper>> individualsByClass;
+	private Set<IndividualWrapper> rootNodes;
+	private Map<ClassWrapper, Set<IndividualWrapper>> individualsByClass;
 	private Map<ClassWrapper, Set<OWLNamedIndividual>> phylorefs = new HashMap<>();
 	private String shortName = "";
 
@@ -95,11 +97,11 @@ public class Phylogeny {
 			}
 			individualsByClass.put(
 				new ClassWrapper(ontology, reasoner, c), 
-				reasoner.getInstances(c, false).getFlattened().stream().map((OWLNamedIndividual indiv) -> new NodeWrapper(ontology, reasoner, indiv)).collect(Collectors.toSet())
+				reasoner.getInstances(c, false).getFlattened().stream().map((OWLNamedIndividual indiv) -> new IndividualWrapper(ontology, reasoner, indiv)).collect(Collectors.toSet())
 			);
 		}
 		rootNodes = new HashSet<>();
-		rootNodes.addAll(ontology.getEntitiesInSignature(IRI.create("http://phyloinformatics.net/phylo/journal.pone.0094199.s022#Node_1")).stream().map((OWLEntity e) -> new NodeWrapper(ontology, reasoner, e.asOWLNamedIndividual())).collect(Collectors.toSet()));
+		rootNodes.addAll(ontology.getEntitiesInSignature(IRI.create("http://phyloinformatics.net/phylo/journal.pone.0094199.s022#Node_1")).stream().map((OWLEntity e) -> new IndividualWrapper(ontology, reasoner, e.asOWLNamedIndividual())).collect(Collectors.toSet()));
 		// Phyloreferences are classes that are subclasses of phyloref:Phyloreferences.
 		IRI iri_phyloreferences = IRI.create("http://phyloinformatics.net/phyloref.owl#Phyloreference");
 		Set<OWLEntity> classes_phyloreferences = ontology.getEntitiesInSignature(iri_phyloreferences);
@@ -131,11 +133,11 @@ public class Phylogeny {
 		return fileOntology;
 	}
 
-	public Map<ClassWrapper, Set<NodeWrapper>> getIndividualsByClass() {
+	public Map<ClassWrapper, Set<IndividualWrapper>> getIndividualsByClass() {
 		return individualsByClass;
 	}
 
-	public Set<NodeWrapper> getRootNodes() {
+	public Set<IndividualWrapper> getRootNodes() {
 		return rootNodes;
 	}
 
@@ -165,16 +167,21 @@ public class Phylogeny {
 		}
 	}
 
-	public Map<ClassWrapper, Set<NodeWrapper>> getPhylorefs() {
-		Map<ClassWrapper, Set<NodeWrapper>> results = new HashMap<>();
+	public Map<ClassWrapper, Set<IndividualWrapper>> getPhylorefs() {
+		Map<ClassWrapper, Set<IndividualWrapper>> results = new HashMap<>();
 		for (ClassWrapper c : phylorefs.keySet()) {
 			results.put(c, phylorefs.get(c).stream()
 				// .filter((OWLNamedIndividual i) -> !i.getIRI().getFragment().endsWith("_expected"))
-				.map((OWLNamedIndividual i) -> new NodeWrapper(ontology, reasoner, i))
+				.map((OWLNamedIndividual i) -> new IndividualWrapper(ontology, reasoner, i))
 				.collect(Collectors.toSet()));
 		}
 		return results;
 	}
+	
+	public List<ClassWrapper> getPhylorefsSorted() {
+		return phylorefs.keySet().stream().sorted().collect(Collectors.toList());
+	}
+	
 	StringBuilder errors = new StringBuilder();
 
 	public void addError(String err) {

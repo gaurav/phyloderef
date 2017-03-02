@@ -33,16 +33,16 @@
         
         <h3 id="phylorefs">Phyloreferences</h3>
         
-        <p>Jump to phyloref: <#list phylorefs?keys?sort as phyloref><a href="#phyloref_${phyloref?index}">${phyloref.IRI.fragment}</a><#sep>, </#list>.</p>
+        <p>Jump to phyloref: <#list phylorefsSorted as phyloref><a href="#phyloref_${phyloref?index}">${phyloref.IRI.fragment}</a><#sep>, </#list>.</p>
         
         <ul>
-        <#list phylorefs?keys?sort as phyloref>
+        <#list phylorefsSorted as phyloref>
             <li id="phyloref_${phyloref?index}"><strong>${phyloref.IRI.fragment}</strong></li>
                 <ul>
                 <#list phyloref.equivalentClassesAsManchester as equivClass>
                     <li><strong>Equivalent to:</strong> ${equivClass}</li>
                 </#list>
-                    <li>Containing nodes:</li>
+                    <li>Contains ${phylorefs?api.get(phyloref)?size} nodes:</li>
                     <ul class="tree">
                         <#list phylorefs?api.get(phyloref) as rootNode>    
                             <@drawTreeStartingWith rootNode />

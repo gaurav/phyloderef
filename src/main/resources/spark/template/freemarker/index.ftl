@@ -9,7 +9,7 @@
 
 <ul>
     <#list phylogenies as phylogeny>
-        <li><a href="file/${phylogeny.shortName}">${phylogeny.name}</a></li>
+        <li><a href="file/${phylogeny.shortName}/">${phylogeny.name}</a></li>
     <#else>
         <em>No phylogenies loaded.</em>
     </#list>

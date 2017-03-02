@@ -20,7 +20,7 @@ import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxObjec
  * 
  * @author Gaurav Vaidya <gaurav@ggvaidya.com>
  */
-public class ClassWrapper {
+public class ClassWrapper implements Comparable {
 	private OWLOntology ontology;
 	private Reasoner reasoner;
 	private OWLClass clazz;
@@ -90,6 +90,11 @@ public class ClassWrapper {
 
 	public IRI getIRI() {
 		return clazz.getIRI();
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		return getShortName().compareTo(((ClassWrapper)o).getShortName());
 	}
 	
 }
