@@ -1,5 +1,7 @@
 package org.phyloref.phyloderef;
 
+import freemarker.template.Configuration;
+import freemarker.template.Version;
 import java.io.*;
 import java.util.*;
 import org.semanticweb.owlapi.model.*;
@@ -35,7 +37,19 @@ public class PhyloDeRef {
     }
 	
     public static void main(String[] args) {
+		// Set up the Heroku-assigned port.
 		port(getHerokuAssignedPort());
+		
+		// Set up static folder.
+		staticFileLocation("/public");
+		
+		// Configure FreeMarkerEngine.
+		// Note that Configuration is 2.3.23 -- hopefully, someday we'll get up to 2.3.25!
+		Configuration config = new Configuration(new Version(2, 3, 23));
+		// The following undocumented statement is essential.
+		config.setClassForTemplateLoading(FreeMarkerEngine.class, "");
+		config.setAPIBuiltinEnabled(true);
+		config.setLogTemplateExceptions(true);
 		
 		// Set up the system.
 		PhyloDeRef pr;
@@ -49,10 +63,10 @@ public class PhyloDeRef {
 		}
 		
 		// Set up the index page.
-		get("/", (req, res) -> new ModelAndView(pr, "index.ftl"), new FreeMarkerEngine());
+		get("/", (req, res) -> new ModelAndView(pr, "index.ftl"), new FreeMarkerEngine(config));
 		
 		pr.getPhylogenies().forEach((owlFile) -> {
-			get("/file/" + owlFile.getShortName(), (req, res) -> new ModelAndView(owlFile, "phylogeny.ftl"), new FreeMarkerEngine());
+			get("/file/" + owlFile.getShortName(), (req, res) -> new ModelAndView(owlFile, "phylogeny.ftl"), new FreeMarkerEngine(config));
 		});
 	}
 }

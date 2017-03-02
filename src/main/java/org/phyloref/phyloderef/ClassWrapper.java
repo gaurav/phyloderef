@@ -20,8 +20,7 @@ import uk.ac.manchester.cs.owl.owlapi.mansyntaxrenderer.ManchesterOWLSyntaxObjec
  * 
  * @author Gaurav Vaidya <gaurav@ggvaidya.com>
  */
-class ClassWrapper {
-	
+public class ClassWrapper {
 	private OWLOntology ontology;
 	private Reasoner reasoner;
 	private OWLClass clazz;
@@ -44,6 +43,7 @@ class ClassWrapper {
 				// we'll hard-code some of them here.
 				Map<IRI, String> shortForms = new HashMap<>();
 				shortForms.put(IRI.create("http://purl.obolibrary.org/obo/CDAO_0000140"), "Node");
+				shortForms.put(IRI.create("http://purl.obolibrary.org/obo/CDAO_0000144"), "has_Ancestor");
 				shortForms.put(IRI.create("http://purl.obolibrary.org/obo/CDAO_0000149"), "has_Child");
 				shortForms.put(IRI.create("http://purl.obolibrary.org/obo/CDAO_0000174"), "has_Descendant");
 				String name = null;
@@ -64,7 +64,8 @@ class ClassWrapper {
 				if (name == null) {
 					name = entity.getIRI().getFragment();
 				}
-				return name;
+				
+				return name.trim();
 			}
 
 			@Override
@@ -81,6 +82,10 @@ class ClassWrapper {
 
 	public OWLClass getOWLClass() {
 		return clazz;
+	}
+	
+	public String getShortName() {
+		return clazz.getIRI().getFragment();
 	}
 
 	public IRI getIRI() {

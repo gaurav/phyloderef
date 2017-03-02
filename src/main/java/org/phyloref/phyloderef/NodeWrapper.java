@@ -6,6 +6,8 @@
 package org.phyloref.phyloderef;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.owlapi.model.IRI;
@@ -17,8 +19,7 @@ import org.semanticweb.owlapi.model.OWLOntology;
  *
  * @author Gaurav Vaidya <gaurav@ggvaidya.com>
  */
-class NodeWrapper {
-	
+public class NodeWrapper {
 	private OWLOntology ontology;
 	private Reasoner reasoner;
 	private OWLIndividual node;
@@ -30,8 +31,8 @@ class NodeWrapper {
 		node = n;
 	}
 
-	public Set<NodeWrapper> getChildren() {
-		Set<NodeWrapper> children = new HashSet<>();
+	public List<NodeWrapper> getChildren() {
+		List<NodeWrapper> children = new LinkedList<>();
 		Set<OWLObjectPropertyAssertionAxiom> objectPropertyAssertionAxioms = ontology.getObjectPropertyAssertionAxioms(node);
 		for (OWLObjectPropertyAssertionAxiom axiom : objectPropertyAssertionAxioms) {
 			if (axiom.getProperty().asOWLObjectProperty().getIRI().equals(iri_CDAO_has_Child)) {
@@ -39,6 +40,10 @@ class NodeWrapper {
 			}
 		}
 		return children;
+	}
+	
+	public String getShortName() {
+		return node.toStringID().replaceAll("[^a-zA-Z_]", "_");
 	}
 
 	@Override

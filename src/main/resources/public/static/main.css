@@ -1,0 +1,10 @@
+/*
+ * We'll organize this better if we ever need to.
+ */
+
+.tree ul { 
+    list-style-type: none;
+    border-left: 1px solid green;
+    padding-left: 0.5em;
+}
+p.errors { color: red; margin-left: 2em; }

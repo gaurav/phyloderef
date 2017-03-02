@@ -6,7 +6,8 @@
     <head>
         <title>${title}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        </head>
+        <link rel="stylesheet" type="text/css" href="/static/main.css">
+    </head>
     <body>
         <#nested>
     </body>
