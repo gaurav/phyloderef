@@ -101,7 +101,12 @@ public class Phylogeny {
 			);
 		}
 		rootNodes = new HashSet<>();
-		rootNodes.addAll(ontology.getEntitiesInSignature(IRI.create("http://phyloinformatics.net/phylo/journal.pone.0094199.s022#Node_1")).stream().map((OWLEntity e) -> new IndividualWrapper(ontology, reasoner, e.asOWLNamedIndividual())).collect(Collectors.toSet()));
+		rootNodes.addAll(
+			ontology.getEntitiesInSignature(IRI.create("http://phyloinformatics.net/phylo/" + getShortName().replaceAll("\\.owl$", "") + "#Node_1")).stream()
+				.map((OWLEntity e) -> new IndividualWrapper(ontology, reasoner, e.asOWLNamedIndividual()))
+				.collect(Collectors.toSet())
+		);
+		
 		// Phyloreferences are classes that are subclasses of phyloref:Phyloreferences.
 		IRI iri_phyloreferences = IRI.create("http://phyloinformatics.net/phyloref.owl#Phyloreference");
 		Set<OWLEntity> classes_phyloreferences = ontology.getEntitiesInSignature(iri_phyloreferences);

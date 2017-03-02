@@ -59,10 +59,10 @@
         
         <p>Jump to: <#list rootNodes?sort as node><a href="#tree_root_${node?index}">${node}</a><#sep>, </#list>.</p>
         
-        <ul>
+        <ul class="tree">
             <#list rootNodes?sort as node>
-                <li id="#tree_root_${node?index}">${node}</a>
-                <ul class="tree">
+                <li id="tree_root_${node?index}">${node}</a>
+                <ul>
                     <#list node.children as child>
                         <@drawTreeStartingWith child />
                     </#list>
