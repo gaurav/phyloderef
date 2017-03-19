@@ -89,7 +89,6 @@
         <h3 id="properties">Properties</h3>
 
         <ul>
-            <li>OWLFile: <tt>${file}</tt>.</li>
             <li>Ontology: <tt>${ontology}</tt>.</li>
             <li>Reasoner: <tt>${reasoner}</tt>.</li>
         </ul>

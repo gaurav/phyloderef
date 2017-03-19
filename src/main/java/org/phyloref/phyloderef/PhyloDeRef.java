@@ -12,13 +12,13 @@ import spark.template.freemarker.FreeMarkerEngine;
 import static spark.Spark.*;
 
 public class PhyloDeRef {
-	private final List<Phylogeny> phylogenies;
+	private final List<PhylogenyFromGist> phylogenies;
 
 	public String getName() { return "PhyloDeRef/" + VERSION; }	
 	public static final String VERSION = "0.1";
 
 	public PhyloDeRef() throws OWLException, IOException {
-		phylogenies = Arrays.asList(
+		phylogenies = Arrays.asList(/*
 			new Phylogeny(
 				"Crowl et al., 2014: Plasmid ML tree",
 				new File("examples/journal.pone.0094199.s020.owl"),
@@ -38,10 +38,14 @@ public class PhyloDeRef {
 				"Mullins et al., 2012: most parsimonious tree",
 				new File("examples/pg_2357.owl"),
 				new File("examples/pg_2357.phylorefs.omn")
+			),*/
+			new PhylogenyFromGist(
+				"gaurav", 
+				"984cc6a27d0d45c52be5ceb5572cb483"
 			)
 		);
 	}
-	public List<Phylogeny> getPhylogenies() { return phylogenies; }
+	public List<PhylogenyFromGist> getPhylogenies() { return phylogenies; }
 	
 	private static int getHerokuAssignedPort() {
         ProcessBuilder processBuilder = new ProcessBuilder();
